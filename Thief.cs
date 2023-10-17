@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class Thief : NPC
 {
-	#region Parameters
+    #region Parameters
 
-	[SerializeField] private float stolenMoney = -1f;
+    [SerializeField] private float stolenMoney = -1f;
 
-	#endregion
+    private Transform npc;
+
+    public float StolenMoney { get => stolenMoney; set => stolenMoney = value; }
+
+    public Transform Npc { get => npc; set => npc = value; }
+
+    #endregion
 }

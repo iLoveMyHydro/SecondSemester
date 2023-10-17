@@ -7,39 +7,31 @@ public class StateMachine
 
     #region Parameters
 
-    [SerializeField] private State targetState = null;
+    [SerializeField] private State currentState;
 
     [SerializeField] private Dictionary<State, List<Transition>> transitions;
 
     #endregion
 
+    #region Tick
 
-    #region Start
-
-    // Start is called before the first frame update
-    void Start()
+    public void Tick()
     {
+        State nextState = GetNextState();
 
-    }
+        if (nextState != null) SwitchState(nextState);
 
-    #endregion
-
-    #region Update
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        currentState.OnStateUpdate();
     }
 
     #endregion
 
     #region Constructor
 
-    public StateMachine(State targetState, Dictionary<State, List<Transition>> transitions)
+    public StateMachine(State startState, Dictionary<State, List<Transition>> transitions)
     {
         this.transitions = transitions;
-        this.targetState = targetState;
+        this.currentState = startState;
     }
 
     #endregion
@@ -48,7 +40,14 @@ public class StateMachine
 
     private State GetNextState()
     {
+        List<Transition> currentTransitions = transitions[currentState];
 
+        foreach (Transition transition in currentTransitions)
+        {
+            if (transition.Condition()) return transition.TargetState;
+        }
+
+        return null;
     }
 
     #endregion
@@ -57,7 +56,12 @@ public class StateMachine
 
     private void SwitchState(State targetState)
     {
+        if (currentState == targetState) return;
 
+        currentState.OnStateExit();
+        targetState.OnStateEnter();
+
+        currentState = targetState;
     }
 
     #endregion

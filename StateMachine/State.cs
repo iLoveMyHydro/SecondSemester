@@ -6,17 +6,22 @@ public abstract class State
 {
     #region Parameters
 
-    [SerializeField] protected NPC npc;
+    [SerializeField] protected NPC human;
+
+    [SerializeField] protected Thief thief;
+
+    private const string TextNoExit = "There is no exit in this state!";
 
     #endregion
 
 
     #region Constructor
 
-    public State(NPC npc)
+    protected State(NPC human)
     {
-        this.npc = npc;
+        this.human = human;
     }
+
 
     #endregion
 
@@ -43,7 +48,7 @@ public abstract class State
 
     public virtual void OnStateExit()
     {
-
+        Debug.LogWarning(TextNoExit);
     }
 
     #endregion
