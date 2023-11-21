@@ -11,10 +11,9 @@ public class ChooseDirectionState : State
 
     public override void OnStateEnter()
     {
-        Vector2 randomDirection = Random.insideUnitCircle.normalized;
-        human.MovementDirection = new Vector3(randomDirection.x, 0.0f, randomDirection.y);
+        var destination = human.Agent.SetDestination(new Vector3(Random.Range(-14, 15), 0, Random.Range(-14, 15)));
         human.CurrentWalkingTime = 0.0f;
-        human.MaxWalkingTime = Random.Range(0f, 6f);
+        human.MaxWalkingTime = Random.Range(4f, 6f);
     }
 
     #endregion

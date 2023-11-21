@@ -26,11 +26,7 @@ public class WalkState : State
 
     public override void OnStateUpdate()
     {
-        human.Agent.destination = human.transform.position + human.MovementDirection;
         human.CurrentWalkingTime += Time.deltaTime;
-
-        // human.Agent.SetDestination(new Vector3(Random.Range(-14, 15), 0, Random.Range(-14, 15)));
-
     }
 
     #endregion

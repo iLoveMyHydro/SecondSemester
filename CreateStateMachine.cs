@@ -6,6 +6,8 @@ public class CreateStateMachine : MonoBehaviour
 {
     #region Parameters
 
+    [SerializeField] private float leastMoney = -1f;
+
     [SerializeField] private List<NPC> people;
 
     [SerializeField] private List<Thief> thiefs;
@@ -116,15 +118,23 @@ public class CreateStateMachine : MonoBehaviour
     {
         Collider[] colliders = Physics.OverlapSphere(thief.transform.position, thief.AttentionRadius, thief.Mask);
 
+        var viableNPCs = new List<Transform>();
 
-        if (colliders.Length > 0)
+        for (int i = 0; i < colliders.Length; i++)
         {
-            thief.Npc = colliders[0].transform;
+            if (colliders[i].TryGetComponent(out NPC npc) && npc.Money >= leastMoney)
+            {
+
+                viableNPCs.Add(colliders[i].transform);
+            }
+        }
+        if (viableNPCs.Count > 0)
+        {
+            thief.Npc = viableNPCs[0];
             return true;
         }
         thief.Npc = null;
         return false;
     }
-
     #endregion
 }

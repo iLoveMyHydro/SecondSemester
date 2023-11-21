@@ -15,4 +15,10 @@ public class Thief : NPC
     public Transform Npc { get => npc; set => npc = value; }
 
     #endregion
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.black;
+        Gizmos.DrawSphere(transform.position + Vector3.up * 1.5f, 0.25f);
+    }
 }
