@@ -45,7 +45,7 @@ public class CreateStateMachine : MonoBehaviour
 
     #endregion
 
-    #region CreateStateMachine
+    #region CreateStateMachineNpc
 
     private void CreateStateMachineNpc(NPC npc)
     {
