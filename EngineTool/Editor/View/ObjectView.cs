@@ -1,6 +1,8 @@
 using System;
 using UnityEditor;
+using UnityEditor.TerrainTools;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class ObjectView : EditorWindow
 {
@@ -10,7 +12,8 @@ public class ObjectView : EditorWindow
 
     private static ObjectView self;
 
-    public ObjectViewModel viewModel { get; set; } = null;
+    public ObjectViewModel viewModel { get; set; }
+    public static ObjectView Self { get => self; set => self = value; }
 
     #endregion
 
@@ -107,9 +110,23 @@ public class ObjectView : EditorWindow
 
     #endregion
 
+    #region Material
+
+    private const string material = "MeshRenderer";
+
     #endregion
 
     #endregion
+
+    #endregion
+
+    public ObjectView()
+    {
+        self = this;
+        viewModel = new();
+    }
+
+
 
 
     //View -> GUILayout
@@ -123,6 +140,30 @@ public class ObjectView : EditorWindow
         Object();
 
         ActivateToogle();
+
+        GetMaterial();
+
+        Repaint();
+    }
+
+    private void GetMaterial()
+    {
+        self.viewModel.MeshRenderer = (MeshRenderer)EditorGUILayout.ObjectField(material,
+                self.viewModel.MeshRenderer,
+                typeof(MeshRenderer),
+                true);
+    }
+
+    private void GetMousePosition()
+    {
+        var ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
+        if (Physics.Raycast(ray, out var hit))
+        {
+            if (self.viewModel.MeshRenderer != null)
+            {
+                self.viewModel.MeshRenderer.material.SetVector("_MousePosition", new Vector2(hit.point.x, hit.point.z));
+            }
+        }
     }
 
     private void ActivateToogle()
@@ -130,6 +171,7 @@ public class ObjectView : EditorWindow
         EditorGUI.indentLevel++;
         GUILayout.BeginVertical("HelpBox");
         self.viewModel.ActivateCircle = GUILayout.Toggle(self.viewModel.ActivateCircle, activateCircle);
+        if (self.viewModel.ActivateCircle) GetMousePosition();
         GUILayout.EndVertical();
     }
 
@@ -176,26 +218,8 @@ public class ObjectView : EditorWindow
                 EditorGUILayout.EndHorizontal();
             }
 
-            GUILayout.BeginHorizontal();
-            openObjectDensityFoldout = EditorGUILayout.Foldout(openObjectDensityFoldout, objectDensity);
-            self.viewModel.SliderDensity = EditorGUILayout.Slider(self.viewModel.SliderDensity,
-                self.viewModel.MinDensity,
-                self.viewModel.MaxDensity);
-            GUILayout.EndHorizontal();
-
-            if (openObjectDensityFoldout)
-            {
-                EditorGUILayout.BeginHorizontal();
-                self.viewModel.MinDensity = EditorGUILayout.FloatField("Min", self.viewModel.MinDensity);
-
-                self.viewModel.MaxDensity = EditorGUILayout.FloatField("Max", self.viewModel.MaxDensity);
-                EditorGUILayout.EndHorizontal();
-            }
-
             if (self.viewModel.MinNumber > self.viewModel.MaxNumber)
                 self.viewModel.MinNumber = self.viewModel.MaxNumber;
-            if (self.viewModel.MinDensity > self.viewModel.MaxDensity)
-                self.viewModel.MaxDensity = self.viewModel.MinDensity;
             EditorGUI.indentLevel--;
             GUILayout.EndVertical();
         }
@@ -210,8 +234,8 @@ public class ObjectView : EditorWindow
 
         if (openObjectFieldFoldout)
         {
-            self.viewModel._Target.GameObject = (GameObject)EditorGUILayout.ObjectField(objectField,
-                self.viewModel._Target.GameObject,
+            self.viewModel.GameObject = (GameObject)EditorGUILayout.ObjectField(objectField,
+                self.viewModel.GameObject,
                 typeof(GameObject),
                 true);
 
@@ -260,6 +284,13 @@ public class ObjectView : EditorWindow
                 self.viewModel.SliderSize = EditorGUILayout.Slider(self.viewModel.SliderSize,
                     self.viewModel.MinSize,
                     self.viewModel.MaxSize);
+                if (self.viewModel.MeshRenderer != null)
+                {
+                    if (self.viewModel.SliderSize != self.viewModel.MeshRenderer.material.GetFloat("_Radius"))
+                    {
+                        self.viewModel.SizeCircle();
+                    }
+                }
                 EditorGUILayout.EndHorizontal();
 
                 if (openBrushSizeFoldout)
@@ -271,8 +302,10 @@ public class ObjectView : EditorWindow
                     EditorGUILayout.EndHorizontal();
                 }
 
-                if (self.viewModel.MinBrush > self.viewModel.MaxBrush) self.viewModel.MaxBrush = self.viewModel.MinBrush;
-                if (self.viewModel.MinSize > self.viewModel.MaxSize) self.viewModel.MaxSize = self.viewModel.MinSize;
+                if (self.viewModel.MinBrush > self.viewModel.MaxBrush)
+                    self.viewModel.MaxBrush = self.viewModel.MinBrush;
+                if (self.viewModel.MinSize > self.viewModel.MaxSize)
+                    self.viewModel.MaxSize = self.viewModel.MinSize;
                 EditorGUI.indentLevel--;
                 GUILayout.EndVertical();
             }
@@ -284,7 +317,7 @@ public class ObjectView : EditorWindow
     private static void ShowWindow()
     {
         self = GetWindow<ObjectView>();
-        self.titleContent = new GUIContent("ChooseObject Painter");
+        self.titleContent = new GUIContent("Choose Object Painter");
         self.viewModel = new();
         self.viewModel.PropertyChanged += (sender, e) => { };
         self.minSize = new Vector2(475, 200);

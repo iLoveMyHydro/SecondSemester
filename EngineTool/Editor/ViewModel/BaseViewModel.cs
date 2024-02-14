@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using UnityEngine;
 
 public class BaseViewModel : INotifyPropertyChanged
 {
@@ -31,7 +32,13 @@ public class BaseViewModel : INotifyPropertyChanged
         PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    protected void Update(Func<object> get, Action<object> set, object value, [CallerMemberName] string propertyName = null)
+    protected void Update(Func<GameObject> get, Action<GameObject> set, GameObject value, [CallerMemberName] string propertyName = null)
+    {
+        set.Invoke(value);
+        PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected void Update(Func<MeshRenderer> get, Action<MeshRenderer> set, MeshRenderer value, [CallerMemberName] string propertyName = null)
     {
         set.Invoke(value);
         PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));

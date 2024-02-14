@@ -1,8 +1,13 @@
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class ObjectViewModel : BaseViewModel
 {
     public ObjectModel _Target;
+
+    public Transform _transform;
 
     #region Number
     public float MinNumber
@@ -21,28 +26,6 @@ public class ObjectViewModel : BaseViewModel
     {
         get => _Target.SliderNumber;
         set => Update(() => _Target.SliderNumber, val => _Target.SliderNumber = val, value);
-    }
-
-    #endregion
-
-    #region Density
-
-    public float MinDensity
-    {
-        get => _Target.MinDensityValue;
-        set => Update(() => _Target.MinDensityValue, val => _Target.MinDensityValue = val, value);
-    }
-
-    public float MaxDensity
-    {
-        get => _Target.MaxDensityValue;
-        set => Update(() => _Target.MaxDensityValue, val => _Target.MaxDensityValue = val, value);
-    }
-
-    public float SliderDensity
-    {
-        get => _Target.SliderDensity;
-        set => Update(() => _Target.SliderDensity, val => _Target.SliderDensity = val, value);
     }
 
     #endregion
@@ -103,7 +86,7 @@ public class ObjectViewModel : BaseViewModel
 
     #region GameObject
 
-    public object GameObject
+    public GameObject GameObject
     {
         get => _Target.GameObject;
         set => Update(() => _Target.GameObject, val => _Target.GameObject = (GameObject)val, value);
@@ -111,37 +94,58 @@ public class ObjectViewModel : BaseViewModel
 
     #endregion
 
-    public void DrawCircle()
+    #region DrawCircle
+
+    public MeshRenderer MeshRenderer
     {
-        if(_Target.ActivateCircle)
-        {
-            
-        }
+        get => _Target.MeshRenderer;
+        set => Update(() => _Target.MeshRenderer, val => _Target.MeshRenderer = val, value);
     }
 
+    #endregion
+
+    #region Size Circle
     public void SizeCircle()
     {
-
+        _Target.MeshRenderer.material.SetFloat("_Radius", _Target.SliderSize);
     }
 
+    #endregion
+
+    #region PlaceObject
     public void PlaceObject()
     {
 
     }
+
+    #endregion
+
+    #region DeleteObject
 
     public void Delete”bject()
     {
 
     }
 
+    #endregion
+
+    #region CalculateHeight
+
     public void CalculateHeight()
     {
 
     }
 
+    #endregion
+
+
+    #region Constructor
 
     public ObjectViewModel()
     {
         _Target = new();
     }
+
+    #endregion
+
 }
