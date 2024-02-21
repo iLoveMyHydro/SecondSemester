@@ -1,34 +1,32 @@
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
+/// <summary>
+/// MVVM MODEL BASE IS FROM MARCUS SCHAAL 
+/// MADE WITH HIM IN OCE
+/// </summary>
 public class ObjectViewModel : BaseViewModel
 {
+    /// <summary>
+    /// Object of the ObjectModel
+    /// </summary>
     public ObjectModel _Target;
 
-    public Transform _transform;
+    #region Parameters
 
-    #region Number
-    public float MinNumber
-    {
-        get => _Target.MinNumberValue;
-        set => Update(() => _Target.MinNumberValue, val => _Target.MinNumberValue = val, value);
-    }
+    #region Const
 
-    public float MaxNumber
-    {
-        get => _Target.MaxNumberValue;
-        set => Update(() => _Target.MaxNumberValue, val => _Target.MaxNumberValue = val, value);
-    }
-
-    public float SliderNumber
-    {
-        get => _Target.SliderNumber;
-        set => Update(() => _Target.SliderNumber, val => _Target.SliderNumber = val, value);
-    }
+    /// <summary>
+    /// const string for the Tag which you wanna use for the GameObjects you Instantiate
+    /// </summary>
+    private const string objectTag = "PlacedObject";
 
     #endregion
+
+    #region Properties
+    /// <summary>
+    /// Properties of all Values used in the other Classes -> Same Structure everytime 
+    /// 
+    /// </summary>
 
     #region Size
 
@@ -52,24 +50,24 @@ public class ObjectViewModel : BaseViewModel
 
     #endregion
 
-    #region Brush
+    #region Density
 
-    public float MinBrush
+    public float MinDensity
     {
-        get => _Target.MinBrushValue;
-        set => Update(() => _Target.MinBrushValue, val => _Target.MinBrushValue = val, value);
+        get => _Target.MinDensityValue;
+        set => Update(() => _Target.MinDensityValue, val => _Target.MinDensityValue = val, value);
     }
 
-    public float MaxBrush
+    public float MaxDensity
     {
-        get => _Target.MaxBrushValue;
-        set => Update(() => _Target.MaxBrushValue, val => _Target.MaxBrushValue = val, value);
+        get => _Target.MaxDensityValue;
+        set => Update(() => _Target.MaxDensityValue, val => _Target.MaxDensityValue = val, value);
     }
 
-    public float SliderBrush
+    public float SliderDensity
     {
-        get => _Target.SliderBrush;
-        set => Update(() => _Target.SliderBrush, val => _Target.SliderBrush = val, value);
+        get => _Target.SliderDensity;
+        set => Update(() => _Target.SliderDensity, val => _Target.SliderDensity = val, value);
     }
 
     #endregion
@@ -80,6 +78,26 @@ public class ObjectViewModel : BaseViewModel
     {
         get => _Target.ActivateCircle;
         set => Update(() => _Target.ActivateCircle, val => _Target.ActivateCircle = val, value);
+    }
+
+    #endregion
+
+    #region Place Object (bool)
+
+    public bool PlaceObjectBool
+    {
+        get => _Target.PlaceObjectBool;
+        set => Update(() => _Target.PlaceObjectBool, val => _Target.PlaceObjectBool = val, value);
+    }
+
+    #endregion
+
+    #region Delete Object (bool)
+
+    public bool DeleteObjectBool
+    {
+        get => _Target.DeleteObjectBool;
+        set => Update(() => _Target.DeleteObjectBool, val => _Target.DeleteObjectBool = val, value);
     }
 
     #endregion
@@ -104,6 +122,35 @@ public class ObjectViewModel : BaseViewModel
 
     #endregion
 
+    #region MousePos
+
+    public Vector3 MousePos
+    {
+        get => _Target.MousePos;
+        set => Update(() => _Target.MousePos, val => _Target.MousePos = val, value);
+    }
+
+    #endregion
+
+    #region LayerMask
+
+    public LayerMask GroundLayer
+    {
+        get => _Target.LayerMask;
+        set => Update(() => _Target.LayerMask, val => _Target.LayerMask = val, value);
+    }
+
+    #endregion
+
+    #endregion
+
+    #endregion
+
+    #region Methods
+
+    /// <summary>
+    /// Resizes the circle if the value of the radius changed -> Not possible if the painter is in use
+    /// </summary>
     #region Size Circle
     public void SizeCircle()
     {
@@ -112,40 +159,127 @@ public class ObjectViewModel : BaseViewModel
 
     #endregion
 
+    #region Density Circle
+
+    /// <summary>
+    /// Calculates the value of the objects getting spawned in the circle 
+    /// </summary>
+    /// <returns></returns>
+    public float GetObjectToPlaceCount()
+    {
+        var radius = _Target.MeshRenderer.material.GetFloat("_Radius");
+
+        var area = (radius * radius) * Mathf.PI;
+        var density = area * _Target.SliderDensity / 100;
+
+        return density;
+    }
+
+    #endregion
+
     #region PlaceObject
+
+    /// <summary>
+    /// Places Objects in the Circle if the GameObject is choosen and the ActivateToggle is true and the PlaceObject Toggle is true
+    /// </summary>
     public void PlaceObject()
     {
+        if (_Target.GameObject != null && _Target.MeshRenderer != null)
+        {
+            var radius = _Target.MeshRenderer.material.GetFloat("_Radius");
 
+            var count = GetObjectToPlaceCount();
+
+            float y = 200f;
+
+            // Im folgenden For-Loop wurde der Code von ChatGPT verwendet
+            for (int i = 0; i < count; i++)
+            {
+
+                var x = Random.Range(-radius, radius);
+                var z = Random.Range(-radius, radius);
+                //Calculates if the y Axis is 0 or sth different 
+                var yCalc = CalculateHeight(x, y, z);
+
+                //Generates a random Position in the circle where the Object gets spawned
+                Vector3 randomPosition = new Vector3(x, yCalc, z) + new Vector3(_Target.MousePos.x, _Target.MousePos.y, _Target.MousePos.z);
+
+                GameObject newObject = Object.Instantiate(_Target.GameObject, randomPosition, Quaternion.identity, _Target.MeshRenderer.transform);
+                newObject.tag = objectTag;
+            }
+        }
+        else return;
     }
 
     #endregion
 
     #region DeleteObject
 
-    public void DeleteÓbject()
+    /// <summary>
+    /// Deletes the Object in the Circle -> Same starting procedure as the PlaceObject Method
+    /// -> Checks all the Placed Objects if they are in the circle -> if so they will be deleted 
+    /// -> Maybe find a better solution -> If time left
+    /// </summary>
+    public void DeleteObject()
     {
+        if (_Target.GameObject != null && _Target.MeshRenderer != null)
+        {
+            var radius = _Target.MeshRenderer.material.GetFloat("_Radius");
 
+            var placedObjects = GameObject.FindGameObjectsWithTag("PlacedObject");
+
+            foreach (var placedObject in placedObjects)
+            {
+                if (Vector3.Distance(placedObject.transform.position, _Target.MousePos) <= radius)
+                {
+                    Object.DestroyImmediate(placedObject);
+                }
+            }
+        }
+        else return;
     }
 
     #endregion
 
     #region CalculateHeight
 
-    public void CalculateHeight()
+    /// <summary>
+    /// Calculates the height where the object gets spawned 
+    /// If the y axis is not 0 a reycast will look which value the y axis gets
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="z"></param>
+    /// <returns></returns>
+    public float CalculateHeight(float x, float y, float z)
     {
+        Ray ray = new(new Vector3(x, y, z), Vector3.down);
 
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, _Target.LayerMask))
+        {
+            return hit.point.y;
+        }
+        else
+        {
+            return 0;
+        }
     }
 
     #endregion
 
+    #endregion
 
     #region Constructor
 
+    /// <summary>
+    /// Constructor of the ObjectViewModel
+    /// </summary>
     public ObjectViewModel()
     {
         _Target = new();
     }
 
     #endregion
-
 }

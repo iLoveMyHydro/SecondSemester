@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +14,9 @@ public class StateMachine
 
     #region Tick
 
+    /// <summary>
+    /// Checks if the State has to change
+    /// </summary>
     public void Tick()
     {
         State nextState = GetNextState();
@@ -28,6 +30,11 @@ public class StateMachine
 
     #region Constructor
 
+    /// <summary>
+    /// Constructor of the StateMachine Class
+    /// </summary>
+    /// <param name="startState"></param>
+    /// <param name="transitions"></param>
     public StateMachine(State startState, Dictionary<State, List<Transition>> transitions)
     {
         this.transitions = transitions;
@@ -38,6 +45,10 @@ public class StateMachine
 
     #region GetNextState
 
+    /// <summary>
+    /// Gets the next state from the transition 
+    /// </summary>
+    /// <returns></returns>
     private State GetNextState()
     {
         List<Transition> currentTransitions = transitions[currentState];
@@ -54,6 +65,10 @@ public class StateMachine
 
     #region SwitchState
 
+    /// <summary>
+    /// Switches the state if the currentState == targetState
+    /// </summary>
+    /// <param name="targetState"></param>
     private void SwitchState(State targetState)
     {
         if (currentState == targetState) return;

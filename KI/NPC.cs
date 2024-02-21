@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -42,6 +40,9 @@ public class NPC : MonoBehaviour
 
     #region Start
 
+    /// <summary>
+    /// Gets the MeshRenderer and the NavMeshAgent for everyone
+    /// </summary>
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();

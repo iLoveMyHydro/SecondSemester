@@ -1,11 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class WalkState : State
 {
     #region Constructor
 
+    /// <summary>
+    /// Constructor of the WalkState Class
+    /// </summary>
+    /// <param name="human"></param>
     public WalkState(NPC human) : base(human)
     {
         this.human = human;
@@ -15,6 +17,9 @@ public class WalkState : State
 
     #region OnStateEnter
 
+    /// <summary>
+    /// Changes the material color to blue -> So you can see when the States change 
+    /// </summary>
     public override void OnStateEnter()
     {
         human.MeshRenderer.material.color = Color.blue;
@@ -24,6 +29,9 @@ public class WalkState : State
 
     #region OnStateUpdate
 
+    /// <summary>
+    /// adds the deltaTime to the Current Walking Time
+    /// </summary>
     public override void OnStateUpdate()
     {
         human.CurrentWalkingTime += Time.deltaTime;
@@ -33,6 +41,9 @@ public class WalkState : State
 
     #region OnStateExit
 
+    /// <summary>
+    /// When you exit this State the Material Color will change to white 
+    /// </summary>
     public override void OnStateExit()
     {
         human.MeshRenderer.material.color = Color.white;

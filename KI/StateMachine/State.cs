@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class State
@@ -17,6 +15,10 @@ public abstract class State
 
     #region Constructor
 
+    /// <summary>
+    /// Constructor for the State Class
+    /// </summary>
+    /// <param name="human"></param>
     protected State(NPC human)
     {
         this.human = human;
@@ -27,6 +29,9 @@ public abstract class State
 
     #region OnStateEnter
 
+    /// <summary>
+    /// On State Enter Method -> Will be coded in the inherited classes
+    /// </summary>
     public virtual void OnStateEnter()
     {
 
@@ -36,6 +41,9 @@ public abstract class State
 
     #region OnStateUpdate
 
+    /// <summary>
+    /// Updates the States -> Will be coded in the inherited classes
+    /// </summary>
     public virtual void OnStateUpdate()
     {
 
@@ -46,6 +54,9 @@ public abstract class State
 
     #region OnStateExit
 
+    /// <summary>
+    /// Exits the States -> Will be coded in the inherited classes
+    /// </summary>
     public virtual void OnStateExit()
     {
         Debug.LogWarning(TextNoExit);

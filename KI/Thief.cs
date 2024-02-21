@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Thief : NPC
@@ -16,9 +14,16 @@ public class Thief : NPC
 
     #endregion
 
+    #region OnDrawGizmos
+
+    /// <summary>
+    /// Draws a Gizmo above the Thief so you can differantiate between the Thief and the NPC
+    /// </summary>
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.black;
         Gizmos.DrawSphere(transform.position + Vector3.up * 1.5f, 0.25f);
     }
+
+    #endregion
 }

@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Transition
@@ -20,6 +18,11 @@ public class Transition
 
     #region Constructor
 
+    /// <summary>
+    /// Constructor of the Transition Class
+    /// </summary>
+    /// <param name="targetState"></param>
+    /// <param name="condition"></param>
     public Transition(State targetState, Func<bool> condition)
     {
         this.targetState = targetState;

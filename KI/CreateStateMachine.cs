@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,6 +17,9 @@ public class CreateStateMachine : MonoBehaviour
 
     #region Start
 
+    /// <summary>
+    /// Goes through the List of NPC and Thiefs and creates the StateMachines for everyone
+    /// </summary>
     public void Start()
     {
         foreach (NPC npc in people)
@@ -35,8 +37,12 @@ public class CreateStateMachine : MonoBehaviour
 
     #region Update
 
+    /// <summary>
+    /// Updates the StateMachine every "Tick"
+    /// </summary>
     public void Update()
     {
+
         foreach (StateMachine stateMachine in stateMachine)
         {
             stateMachine.Tick();
@@ -47,6 +53,10 @@ public class CreateStateMachine : MonoBehaviour
 
     #region CreateStateMachineNpc
 
+    /// <summary>
+    /// Creates the StateMachine for the NPC
+    /// </summary>
+    /// <param name="npc"></param>
     private void CreateStateMachineNpc(NPC npc)
     {
         ChooseDirectionState chooseDirectionState = new ChooseDirectionState(npc);
@@ -79,6 +89,11 @@ public class CreateStateMachine : MonoBehaviour
     #endregion
 
     #region CreateStateMachineThief
+
+    /// <summary>
+    /// Creates the StateMachine for the Thief
+    /// </summary>
+    /// <param name="thief"></param>
     private void CreateStateMachineThief(Thief thief)
     {
         ChooseDirectionState chooseDirectionState = new ChooseDirectionState(thief);
@@ -114,6 +129,11 @@ public class CreateStateMachine : MonoBehaviour
 
     #region CheckForNPC
 
+    /// <summary>
+    /// Checks if in the Range of the Thief a NPC is and if he got enough Money and if it is worth the rob
+    /// </summary>
+    /// <param name="thief"></param>
+    /// <returns></returns>
     private bool CheckForNPC(Thief thief)
     {
         Collider[] colliders = Physics.OverlapSphere(thief.transform.position, thief.AttentionRadius, thief.Mask);

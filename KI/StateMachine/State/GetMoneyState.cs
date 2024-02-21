@@ -1,17 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GetMoneyState : State
 {
     #region Constructor
 
+    /// <summary>
+    /// Constructor of the GetMoneyState Class
+    /// </summary>
+    /// <param name="npc"></param>
     public GetMoneyState(NPC npc) : base(npc) { }
 
     #endregion
 
     #region OnStateEnter
 
+    /// <summary>
+    /// When the NPC has 0 or lower Money he will get something between 1-100
+    /// </summary>
     public override void OnStateEnter()
     {
         if (human.Money <= 0)
@@ -24,6 +29,9 @@ public class GetMoneyState : State
 
     #region OnStateUpdate
 
+    /// <summary>
+    /// Nothing Happens here
+    /// </summary>
     public override void OnStateUpdate()
     {
 
@@ -33,6 +41,9 @@ public class GetMoneyState : State
 
     #region OnStateExit
 
+    /// <summary>
+    /// Nothing Happens here
+    /// </summary>
     public override void OnStateExit()
     {
 
