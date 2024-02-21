@@ -15,10 +15,9 @@ public class ObjectViewModel : BaseViewModel
 
     #region Const
 
-    /// <summary>
-    /// const string for the Tag which you wanna use for the GameObjects you Instantiate
-    /// </summary>
-    private const string objectTag = "PlacedObject";
+    private const string radiusTXT = "_Radius";
+
+    private const string placedObject = "PlacedObject";
 
     #endregion
 
@@ -154,7 +153,7 @@ public class ObjectViewModel : BaseViewModel
     #region Size Circle
     public void SizeCircle()
     {
-        _Target.MeshRenderer.material.SetFloat("_Radius", _Target.SliderSize);
+        _Target.MeshRenderer.sharedMaterial.SetFloat(radiusTXT, _Target.SliderSize);
     }
 
     #endregion
@@ -167,7 +166,7 @@ public class ObjectViewModel : BaseViewModel
     /// <returns></returns>
     public float GetObjectToPlaceCount()
     {
-        var radius = _Target.MeshRenderer.material.GetFloat("_Radius");
+        var radius = _Target.MeshRenderer.sharedMaterial.GetFloat(radiusTXT);
 
         var area = (radius * radius) * Mathf.PI;
         var density = area * _Target.SliderDensity / 100;
@@ -186,7 +185,7 @@ public class ObjectViewModel : BaseViewModel
     {
         if (_Target.GameObject != null && _Target.MeshRenderer != null)
         {
-            var radius = _Target.MeshRenderer.material.GetFloat("_Radius");
+            var radius = _Target.MeshRenderer.sharedMaterial.GetFloat(radiusTXT);
 
             var count = GetObjectToPlaceCount();
 
@@ -195,9 +194,11 @@ public class ObjectViewModel : BaseViewModel
             // Im folgenden For-Loop wurde der Code von ChatGPT verwendet
             for (int i = 0; i < count; i++)
             {
+                var randomRadius = Mathf.Sqrt(Random.Range(0f, 1f)) * radius;
 
-                var x = Random.Range(-radius, radius);
-                var z = Random.Range(-radius, radius);
+                var angle = Random.Range(0f, Mathf.PI * 2f);
+                var x = Mathf.Cos(angle) * randomRadius;
+                var z = Mathf.Sin(angle) * randomRadius;
                 //Calculates if the y Axis is 0 or sth different 
                 var yCalc = CalculateHeight(x, y, z);
 
@@ -205,7 +206,7 @@ public class ObjectViewModel : BaseViewModel
                 Vector3 randomPosition = new Vector3(x, yCalc, z) + new Vector3(_Target.MousePos.x, _Target.MousePos.y, _Target.MousePos.z);
 
                 GameObject newObject = Object.Instantiate(_Target.GameObject, randomPosition, Quaternion.identity, _Target.MeshRenderer.transform);
-                newObject.tag = objectTag;
+                newObject.tag = placedObject;
             }
         }
         else return;
@@ -224,9 +225,9 @@ public class ObjectViewModel : BaseViewModel
     {
         if (_Target.GameObject != null && _Target.MeshRenderer != null)
         {
-            var radius = _Target.MeshRenderer.material.GetFloat("_Radius");
+            var radius = _Target.MeshRenderer.sharedMaterial.GetFloat(radiusTXT);
 
-            var placedObjects = GameObject.FindGameObjectsWithTag("PlacedObject");
+            var placedObjects = GameObject.FindGameObjectsWithTag(placedObject);
 
             foreach (var placedObject in placedObjects)
             {
